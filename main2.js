@@ -10,15 +10,32 @@ const TAB_IDX_JUDEN = 0
 const TAB_IDX_SEARCH_DN = 1
 const TAB_IDX_ITEM_SHOP = 2
 const TAB_IDX_CHANGE_ITEM = 3
+const TAB_IDX_KANKIN = 4
 
 const BUKI_KIND_COUNT = 4;
 const BOUGU_KIND_COUNT = 4;
 
+const KOSEKI_KIND_COUNT = 9
+
 
 const buyItemNames = ["木の棒", "鉄の棒", "鉄の剣", "鋼の剣",
 					  "木の盾", "鉄の盾", "銀の盾", "チタンの盾"]
+					  
 const buyItemPrices = [10, 20, 30, 40,
 					   10, 20, 30, 40]
+					   
+const kosekiNames = ["銅", "鉄", "マンガン", "クリスタル", "石炭",
+					 "石油", "銀", "金", "チタン"] 
+
+const kosekiRndRates = [24, 17, 15, 13,11, 8,6,4,2]
+
+const kosekiPrices = [10, 20, 30, 40,
+					  50, 60, 70, 80]
+					  
+HavingKosekis = [0, 0, 0, 0, 0,
+				 0, 0, 0, 0]
+				 
+
 					   
 HavingItems = [0, 0, 0, 0,
 			  0, 0, 0, 0]
@@ -83,13 +100,37 @@ document.addEventListener('DOMContentLoaded', function () {
 			PrintSoubiHin();
         }
         
+        if(index == TAB_IDX_KANKIN){
+        	PrintHavingKosekis();
+        }
+        
         document.getElementsByClassName('content')[index].classList.add('is-display');
     };
 }, false);
 
+function getRandom( min, max ) {
+    var random = Math.floor( Math.random() * (max + 1 - min) ) + min;
+  
+    return random;
+}
 
+function PrintHavingKosekis(){
+	span1 = document.getElementById("havingKosekiSpan1")
 
+	str1 = ""
+	for(i=0; i<buyItemNames.length; i++){
+		str1 += kosekiNames[i];
+		str1 += "(売値:";
+		str1 += String(kosekiPrices[i]);
+		str1 += ")";
+		str1 += ":"
+		str1 += String(HavingKosekis[i]);
+		str1 += "<br>"
+	}
+	
+	span1.innerHTML = str1;
 
+}
 
 
 function PrintParams(){
@@ -171,6 +212,25 @@ PrintParams();
 PrintTotalWalk();
 PrintHavingItems();
 PrintSoubiHin();
+PrintHavingKosekis();
+
+
+function GetKoseki(){
+	rnd1 = getRandom(1, 100);
+	rnd2 = getRandom(1, 5)
+	
+	total = 0;
+	for(i=0; i<kosekiRndRates.length; i++){
+		total += kosekiRndRates[i];
+		
+		if(total >=  rnd1){
+			idx = i
+			break;
+		}
+	}
+	
+	HavingKosekis[idx] += rnd2
+}
 
 function soubiChange(){
 
