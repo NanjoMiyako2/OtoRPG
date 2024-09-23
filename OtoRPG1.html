@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>ボリュームメーター</title>
+     <link rel="stylesheet" href="style.css">
+    
+  </head>
+  <body>
+  
+    <div style="border: 1px solid black; width: 500px;">
+      <div id="volume" style="height: 10px; background: black; transition: width .1s; width: 0%"></div>
+    </div>
+
+    
+    <hr>
+    スタミナ:<span id="stamina1"></span><br>
+    HP:<span id="hp1"></span><br>
+    攻撃Pt:<span id="attackPt1"></span><br>
+    防御Pt:<span id="diffencePt1"></span><br>
+    ゴールド:<span id="money1"></span><br>
+    <hr>
+
+
+
+    <div class="tab-group">
+        <!--タブ-->
+        <ul class="tab-button">
+            <li class="tab tab-01 is-active">気力を充電</li>
+            <li class="tab tab-02">ダンジョン探索</li>
+            <li class="tab tab-03">アイテムショップ</li>
+            <li class="tab tab-04">装備変更</li>
+        </ul>
+
+        <!--タブを切り替えて表示するコンテンツ-->
+        <div class="tab-contents">
+        
+            <div class="content tab-01 is-display">
+				気力を充電<br>
+				<span>充電するパラメータ:</span>
+				<select id="addParam">
+			      <option value="1">スタミナ</option>
+			      <option value="2">HP</option>
+			      <option value="3">攻撃Pt</option>
+			      <option value="4">防御Pt</option>
+			    </select>
+			    <br>
+			    
+				<br>
+			    UpperVolCount:<span id="UpperVolCount1"></span><br>
+			    UpperVolEventCount:<span id="UpperVolEventCount1"></span><br>
+			    
+			    <button onClick="start()" type="button">充電スタート</button>
+    			<button onClick="end()" type="button">終了</button>
+
+			    
+			    
+            </div>
+            
+            <div class="content tab-02">
+            	ダンジョン探索<br>
+            	総歩数:<span id="totalWalk1"></span><br>
+            	
+            	<button onClick="searchDanjon()" type="button">探索</button><br>
+            	<span id="searchDnSpan1"></span><br>
+            	
+            	
+            </div>
+            
+            <div class="content tab-03">
+            	アイテムショップ<br>
+				<span>購入するアイテム:</span>
+				<select id="Item1">
+			      <option value="1">木の棒(10G)</option>
+			      <option value="2">鉄の棒(20G)</option>
+			      <option value="3">鉄の剣(30G)</option>
+			      <option value="4">鋼の剣(40G)</option>
+			      <option value="5">木の盾(10G)</option>
+			      <option value="6">鉄の盾(20G)</option>
+			      <option value="7">銀の盾(30G)</option>
+			      <option value="8">チタンの盾(40G)</option>
+			    </select>
+			    
+            	<button onClick="buyItem()" type="button">購入</button><br>
+            	<span id="buyItemSpan1"></span><br>
+			    <br>
+			    
+            </div>
+            
+            <div class="content tab-04">
+            	装備変更<br>
+            	
+            	装備中のアイテム:<br>
+            	
+            	持っているアイテム一覧:<br>
+            	<span id="havingItemSpan1"></span><br>
+            </div>
+            
+        </div>
+    </div>
+    
+
+    <script src="main2.js"></script>
+  </body>
+</html>

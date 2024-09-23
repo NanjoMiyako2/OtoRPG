@@ -1,0 +1,45 @@
+.tab-group {
+    margin-top: 20px;
+    /* タブ全体の幅 */
+    width: 500px;
+    list-style: none;
+    text-align: center;
+}
+
+.tab-button {
+    display: flex;
+    justify-content: space-between;
+    list-style: none;
+    /* カーソル形状を指先にする */
+    cursor: pointer;
+}
+
+.tab-button .is-active {
+    background: #4bab80;
+    border: 2px solid #4bab80;
+    color: #FFF;
+}
+
+.tab {
+    width: calc(100% / 3);
+    border: 2px solid #ccebdc;
+    padding: 8px;
+    border-bottom: none;
+}
+
+.tab-contents {
+    border-top: none;
+    background: #ccebdc;
+}
+
+.content {
+    display: none;
+    padding: 8px;
+    text-align: left;
+}
+
+.content.is-display {
+    display: block;
+    border: 2px solid #4bab80;
+    height: 500px;
+}
