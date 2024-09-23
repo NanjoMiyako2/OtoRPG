@@ -30,6 +30,7 @@
             <li class="tab tab-02">ダンジョン探索</li>
             <li class="tab tab-03">アイテムショップ</li>
             <li class="tab tab-04">装備変更</li>
+            <li class="tab tab-05">換金</li>
         </ul>
 
         <!--タブを切り替えて表示するコンテンツ-->
@@ -90,10 +91,36 @@
             <div class="content tab-04">
             	装備変更<br>
             	
-            	装備中のアイテム:<br>
+            	装備中の武器:<span id="soubiBukiSpan1"></span><br><br>
             	
-            	持っているアイテム一覧:<br>
+            	装備中の防具:<span id="soubiBouguSpan1"></span><br><br>
+            	
+            	残っているアイテム一覧:<br>
             	<span id="havingItemSpan1"></span><br>
+            	
+            	アイテム:
+            	<select id="Item2">
+			      <option value="1">木の棒</option>
+			      <option value="2">鉄の棒</option>
+			      <option value="3">鉄の剣</option>
+			      <option value="4">鋼の剣</option>
+			      <option value="5">木の盾</option>
+			      <option value="6">鉄の盾</option>
+			      <option value="7">銀の盾</option>
+			      <option value="8">チタンの盾</option>
+			      <option value = "100">素手(武器なし)</option>
+			      <option value = "101">防具なし</option>
+			    </select>
+			    に
+			    <button onClick="soubiChange()" type="button">装備を変更</button>
+			    <br>
+			    
+            	<span id="ChangeSoubiSpan1"></span><br>
+			    
+            </div>
+            
+            <div class="content tab-05">
+            換金
             </div>
             
         </div>

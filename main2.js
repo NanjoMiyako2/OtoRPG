@@ -11,6 +11,10 @@ const TAB_IDX_SEARCH_DN = 1
 const TAB_IDX_ITEM_SHOP = 2
 const TAB_IDX_CHANGE_ITEM = 3
 
+const BUKI_KIND_COUNT = 4;
+const BOUGU_KIND_COUNT = 4;
+
+
 const buyItemNames = ["木の棒", "鉄の棒", "鉄の剣", "鋼の剣",
 					  "木の盾", "鉄の盾", "銀の盾", "チタンの盾"]
 const buyItemPrices = [10, 20, 30, 40,
@@ -21,7 +25,18 @@ HavingItems = [0, 0, 0, 0,
 			  
 SoubiItemFlg = [0, 0, 0, 0,
 				0, 0, 0, 0]
-					   
+				
+SoubiItemMaxTaikyu = [99, 70, 50, 50,
+					  99, 70, 50, 50]
+					  
+SoubiItemCurrentTaikyu = [99, 70, 50, 50,
+					  99, 70, 50, 50]
+					  
+
+SoubiBukiNasiFlg = true;
+SoubiBouguNasiFlg = true;
+
+
 
 let processor = null
 let localstream = null
@@ -65,11 +80,14 @@ document.addEventListener('DOMContentLoaded', function () {
         
         if(index == TAB_IDX_CHANGE_ITEM){
 			PrintHavingItems();
+			PrintSoubiHin();
         }
         
         document.getElementsByClassName('content')[index].classList.add('is-display');
     };
 }, false);
+
+
 
 
 
@@ -115,11 +133,102 @@ function PrintHavingItems(){
 	span1.innerHTML = str1;
 	
 }
+
+function PrintSoubiHin(){
+	span1 = document.getElementById("soubiBukiSpan1");
+	span2 = document.getElementById("soubiBouguSpan1");
+	
+	if(SoubiBukiNasiFlg == true){
+		span1.innerHTML = "素手(武器なし)"
+	}else{
+		for(i=0; i<BUKI_KIND_COUNT; i++){
+			if(SoubiItemFlg[i] == 1){
+				span1.innerHTML = buyItemNames[i];
+				span1.innerHTML += "(耐久値:";
+				span1.innerHTML += String(SoubiItemCurrentTaikyu[i]);
+				span1.innerHTML += ")"
+			}
+		}
+		
+
+	}
+	
+	if(SoubiBouguNasiFlg == true){
+		span2.innerHTML = "防具なし"
+	}else{
+		for(i=BUKI_KIND_COUNT; i<(BUKI_KIND_COUNT+BOUGU_KIND_COUNT); i++){
+			if(SoubiItemFlg[i] == 1){
+				span2.innerHTML = buyItemNames[i];
+				span2.innerHTML += "(耐久値:";
+				span2.innerHTML += String(SoubiItemCurrentTaikyu[i]);
+				span2.innerHTML += ")"
+			}
+		}
+	}
+}
+
 PrintParams();
 PrintTotalWalk();
 PrintHavingItems();
+PrintSoubiHin();
 
+function soubiChange(){
 
+	span1 = document.getElementById("ChangeSoubiSpan1");
+	id1 = document.getElementById("Item2").value
+	id1 = Number(id1);
+	
+	if(id1 == 100){
+		SoubiBukiNasiFlg = true;
+		
+		SoubiItemFlg = [0, 0, 0, 0,
+						0, 0, 0, 0]
+						
+		span1.innerHTML = "武器を外しました";
+
+						
+	}else if(id1 == 101){
+		SoubiBouguNasiFlg = true;
+		
+		SoubiItemFlg = [0, 0, 0, 0,
+						0, 0, 0, 0]
+						
+		span1.innerHTML = "防具を外しました";
+
+						
+	}else{
+	
+		idx = id1-1;
+		if(HavingItems[idx] <= 0){
+			span1.innerHTML = "持っていないため、装備変更ができませんでした";
+		}else{
+			if(idx <= 3){
+				SoubiBukiNasiFlg = false
+			}else if(idx <= 7){
+				SoubiBouguNasiFlg = false
+			}
+			
+			HavingItems[idx] = HavingItems[idx] - 1;
+			
+			str1 = ""
+			str1 += buyItemNames[idx]
+			str1 += "を装備しなおしました<br>"
+			
+			span1.innerHTML = str1;
+			
+			SoubiItemFlg = [0, 0, 0, 0,
+							0, 0, 0, 0]
+			SoubiItemFlg[idx] = 1;
+			
+			
+			SoubiItemCurrentTaikyu[idx] = SoubiItemMaxTaikyu[idx]
+			
+		}
+	}
+	
+	PrintHavingItems();
+	PrintSoubiHin();
+}
 
 function buyItem(){
 
