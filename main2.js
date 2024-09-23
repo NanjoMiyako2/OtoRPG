@@ -29,12 +29,34 @@ const kosekiNames = ["銅", "鉄", "マンガン", "クリスタル", "石炭",
 
 const kosekiRndRates = [24, 17, 15, 13,11, 8,6,4,2]
 
-const kosekiPrices = [10, 20, 30, 40,
-					  50, 60, 70, 80]
+const kosekiPrices = [10, 20, 30, 40, 50,
+					  60, 70, 80, 90]
 					  
 HavingKosekis = [0, 0, 0, 0, 0,
 				 0, 0, 0, 0]
 				 
+function kankin(){
+
+	span1 = document.getElementById("kankinSpan1");
+	
+	totalPrice = 0;
+	for(i=0; i<kosekiNames.length; i++){
+		totalPrice += (kosekiPrices[i] * HavingKosekis[i]);
+	}
+	
+	Gold += totalPrice;
+	
+	HavingKosekis = [0, 0, 0, 0, 0,
+				 0, 0, 0, 0]
+				 
+	span1.innerHTML = "鉱石を換金しました<br>"
+	span1.innerHTML += "売値:"
+	span1.innerHTML += String(totalPrice);
+	span1.innerHTML += "<br>"
+	
+	PrintHavingKosekis();
+}
+
 
 					   
 HavingItems = [0, 0, 0, 0,
