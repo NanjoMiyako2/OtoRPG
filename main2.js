@@ -71,7 +71,36 @@ DiffencePt = 10;
 WalkPt = 0;
 Gold = 100;
 
+function save(){
 
+	window.localStorage.setItem("Stamina",String(Stamina))
+	window.localStorage.setItem("LifePt",String(LifePt))
+	window.localStorage.setItem("AttackPt",String(AttackPt))
+	window.localStorage.setItem("DiffencePt",String(DiffencePt))
+	window.localStorage.setItem("WalkPt",String(WalkPt))
+	window.localStorage.setItem("Gold",String(Gold))
+	
+	alert("ゲームデータを保存しました");
+}
+
+function load(){
+
+	Stamina = Number(window.localStorage.getItem("Stamina"));
+	LifePt = Number(window.localStorage.getItem("LifePt"));
+	AttackPt = Number(window.localStorage.getItem("AttackPt"));
+	DiffencePt = Number(window.localStorage.getItem("DiffencePt"));
+	WalkPt = Number(window.localStorage.getItem("WalkPt"));
+	Gold = Number(window.localStorage.getItem("Gold"));
+	
+	PrintParams();
+	PrintTotalWalk();
+	PrintHavingItems();
+	PrintSoubiHin();
+	PrintHavingKosekis();
+	UnSetButtle();
+		
+	alert("ゲームデータをロードしました");
+}
 
 
 document.addEventListener('DOMContentLoaded', function () {
