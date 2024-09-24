@@ -17,6 +17,13 @@ const BOUGU_KIND_COUNT = 4;
 
 const KOSEKI_KIND_COUNT = 9
 
+const ENEMY_KIND_COUNT = 9
+
+const WIN = 0;
+const LOSE = 1;
+const ON_BUTTLE = 2;
+
+
 
 const buyItemNames = ["木の棒", "鉄の棒", "鉄の剣", "鋼の剣",
 					  "木の盾", "鉄の盾", "銀の盾", "チタンの盾"]
@@ -34,8 +41,6 @@ const kosekiPrices = [10, 20, 30, 40, 50,
 					  
 HavingKosekis = [0, 2, 0, 5, 0,
 				 0, 0, 4, 0]
-				 
-
 					   
 HavingItems = [0, 0, 0, 0,
 			  0, 0, 0, 0]
@@ -48,11 +53,35 @@ SoubiItemMaxTaikyu = [99, 70, 50, 50,
 					  
 SoubiItemCurrentTaikyu = [99, 70, 50, 50,
 					  99, 70, 50, 50]
+					  
+BukiPowerRate = [1.5, 2, 2.5, 3]
+
+BouguPowerRate = [1.5, 2.5, 3.5, 5]
+
 SoubiBukiNasiFlg = true;
 SoubiBouguNasiFlg = true;
 
+OnButtleFlg = false;
 
+const enemyRndRates = [17, 17, 17, 17, 8,8,8,5,3]
 
+const EnemyNames = ["スライム","アルミラージ","コボルト","ゴブリン",
+			  "ゴーレム","スケルトン","デュラハン","ケルベロス","ドラゴン"]
+			  
+const EnemyMaxLifePt = [10, 10, 20, 20, 
+						30, 40, 50,100, 500]
+
+const EnemyPowerPt = [10, 20, 15, 20,
+					  30, 30, 40, 80, 100]
+					  
+const EnemyGold = [10, 10, 10, 10,
+				   30, 30, 30, 100, 500]
+					  
+
+CurrentEnemyIdx = 0;
+CurrentEnemyLifePt = 0;
+
+						
 let processor = null
 let localstream = null
 
@@ -70,6 +99,110 @@ AttackPt = 10;
 DiffencePt = 10;
 WalkPt = 0;
 Gold = 100;
+
+function GetBukiIdx(){
+	for(i=0; i<BUKI_KIND_COUNT; i++){
+		if(SoubiItemFlg[i] == 1){
+			return i
+		}
+	}
+	
+	return -1
+}
+
+function GetBouguIdx(){
+	for(i=BUKI_KIND_COUNT; i<(BUKI_KIND_COUNT+BOUGU_KIND_COUNT); i++){
+		if(SoubiItemFlg[i] == 1){
+			return i
+		}
+	}
+	
+	return -1
+}
+
+function CalcReducePt(){
+	rnd1 = getRandom(1, 10);
+	
+	reduceRate = 0;
+	if(SoubiBouguNasiFlg == true){
+		reduceRate = 1;
+	}else{
+		reduceRate = BouguPowerRate[GetBouguIdx()];
+	}
+	
+	reducePt1 = rnd1 * reduceRate
+	
+	return reducePt1
+}
+
+
+function CalcAttackPt(){
+	rnd1 = getRandom(1, 10);
+	
+	attackRate = 0;
+	if(SoubiBukiNasiFlg == true){
+		attackRate = 1;
+	}else{
+		attackRate = BukiPowerRate[GetBukiIdx()];
+	}
+	
+	attackPt1 = rnd1 * attackRate
+	
+	return attackPt1
+}
+function GetDamage(){
+
+	rnd1 = getRandom(20, 100);
+	power1 = EnemyPowerPt[CurrentEnemyIdx]
+	
+	power2 = Math.floor(power1 * rnd1 / 100)
+	
+	reduce1 = CalcReducePt()
+	
+	damage = Math.max(0, power2-reduce1);
+	
+	LifePt = LifePt - damage
+	
+	return damage
+}
+
+
+function SetEnemy(){
+
+	span1 = document.getElementById("searchDnSpan1");
+	
+	rnd1 = getRandom(1, 100);
+	
+	
+	total = 0;
+	for(i=0; i<enemyRndRates.length; i++){
+		total += enemyRndRates[i];
+		
+		if(total >=  rnd1){
+			str1 = String(EnemyNames[i]);
+			str1 += "に遭遇しました<br>"
+			
+			idx = i
+			break;
+		}
+	}
+	
+	CurrentEnemyIdx = idx;
+	CurrentEnemyLifePt = EnemyMaxLifePt[idx]
+	
+	span1.innerHTML = str1;
+	
+}
+
+function JudgeWinOrLose(){
+	if(LifePt <= 0){
+		return LOSE
+	}else if(CurrentEnemyLifePt <= 0){
+		return WIN
+	}else{
+		return ON_BUTTLE;
+	}
+}
 
 function save(){
 
@@ -156,6 +289,7 @@ function PrintHavingKosekis(){
 	}
 	
 	span1.innerHTML = str1;
+	str1 = String("");
 
 }
 
@@ -199,6 +333,7 @@ function PrintHavingItems(){
 	}
 	
 	span1.innerHTML = str1;
+	str1 = String("")
 	
 }
 
@@ -244,6 +379,8 @@ function SetButtle(){
 	btn2.disabled = false;
 	btn3.disabled = false;
 	
+	OnButtleFlg = true;
+	
 }
 
 function UnSetButtle(){
@@ -254,28 +391,111 @@ function UnSetButtle(){
 	btn1.disabled = false;
 	btn2.disabled = true;
 	btn3.disabled = true;
+	
+	OnButtleFlg = false;
 }
 
-
-PrintParams();
-PrintTotalWalk();
-PrintHavingItems();
-PrintSoubiHin();
-PrintHavingKosekis();
-UnSetButtle();
-
+function UpdatePrints(){
+	PrintParams();
+	PrintTotalWalk();
+	PrintHavingItems();
+	PrintSoubiHin();
+	PrintHavingKosekis();
+	
+}
 function escapeButtle(){
+	rnd1 = getRandom(1, 100);
+	
 	span1 = document.getElementById("searchDnSpan1");
+	
+	if(rnd1 <= 50){
+		UnSetButtle();
+		span1.innerHTML = "戦闘から離脱しました<br>"
+	}else{
+
+		dg = GetDamage();
+		
+		span1.innerHTML = "逃走に失敗しました<br>"
+		span1.innerHTML += String(dg)
+		span1.innerHTML += "のダメージを受けました<br>"
+		
+		ret1 = JudgeWinOrLose()
+		
+		if(ret1 == LOSE){
+			span1.innerHTML += "敗北しました<br>"
+			SetLose();
+			
+			UpdatePrints();
+			
+		}
+		
+	}
+}
+
+function SetLose(){
+	Stamina = Math.floor(Stamina * 0.8);
+	LifePt = 10;
+	WalkPt = 0
 	
 	UnSetButtle();
 	
-	span1.innerHTML = "先頭から離脱しました<br>"
+	span1 = document.getElementById("searchDnSpan1");
+	span1.innerHTML += "敗北しました<br>"
+}
+
+function SetWin(){
+	
+	Gold = Gold + EnemyGold[CurrentEnemyIdx];
+	UnSetButtle();
+	
+	span1 = document.getElementById("searchDnSpan1");
+	str1 += EnemyNames[CurrentEnemyIdx]
+	str1 += "に勝利しました<br>"
+	str1 += String(EnemyGold[CurrentEnemyIdx])
+	str1 += "ゴールドを獲得しました<br>"
+	
+	span1.innerHTML = str1
 }
 
 function attack(){
 	span1 = document.getElementById("searchDnSpan1");
 	
+	power1 = CalcAttackPt()
+	CurrentEnemyLifePt = Math.max(CurrentEnemyLifePt - power1, 0)
+	
 	span1.innerHTML = "攻撃しました<br>"
+	span1.innerHTML += EnemyNames[CurrentEnemyIdx]
+	span1.innerHTML += "に"
+	span1.innerHTML += String(power1)
+	span1.innerHTML += "のダメージ<br>"
+	
+	ret1 = JudgeWinOrLose()
+	if(ret1 == WIN){
+		SetWin();
+		UnSetButtle();
+		UpdatePrints();
+		return
+		
+	}
+	
+	dg = GetDamage();
+	span1.innerHTML += EnemyNames[CurrentEnemyIdx]
+	span1.innerHTML += "の攻撃<br>"
+	span1.innerHTML += String(dg)
+	span1.innerHTML += "のダメージを受けました<br>"
+	
+	ret1 = JudgeWinOrLose()
+	if(ret1 == LOSE){
+		SetLose();
+		UnSetButtle();
+		UpdatePrints();
+		return
+		
+	}
+	
+	UpdatePrints();
+	return
+	
 }
 
 function kankin(){
@@ -467,7 +687,7 @@ function searchDanjon(){
 	if(Stamina <= 0){
 		span1.innerHTML = "スタミナ不足で探索できませんでした<br>"
 		
-	}else{
+	}else if(OnButtleFlg == false){
 		WalkPt++;
 		Stamina--;
 		span1.innerHTML = "ダンジョン探索をしました<br>"
@@ -475,12 +695,14 @@ function searchDanjon(){
 		rnd1 = getRandom(1, 100);
 		
 		if(rnd1 <= 50){
+			UnSetButtle();
+			
 			span1.innerHTML += "鉱石を見つけました<br>"
 			GetKoseki()
 			
 		}else{
-			span1.innerHTML += "モンスターに遭遇しました<br>"
 			SetButtle()
+			SetEnemy()
 		}
 		
 
@@ -521,3 +743,14 @@ async function end(){
     })
 
 }
+
+function main(){
+	PrintParams();
+	PrintTotalWalk();
+	PrintHavingItems();
+	PrintSoubiHin();
+	PrintHavingKosekis();
+	UnSetButtle();
+}
+
+main();
