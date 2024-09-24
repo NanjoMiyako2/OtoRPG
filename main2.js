@@ -16,6 +16,8 @@ const BUKI_KIND_COUNT = 4;
 const BOUGU_KIND_COUNT = 4;
 
 const KOSEKI_KIND_COUNT = 9
+const KOSEKI_HAVING_MAX = 999;
+
 
 const ENEMY_KIND_COUNT = 9
 
@@ -51,8 +53,8 @@ SoubiItemFlg = [0, 0, 0, 0,
 SoubiItemMaxTaikyu = [99, 70, 50, 50,
 					  99, 70, 50, 50]
 					  
-SoubiItemCurrentTaikyu = [99, 70, 50, 50,
-					  99, 70, 50, 50]
+SoubiItemCurrentTaikyu = [0, 0, 0, 0,
+					  0, 0, 0, 0]
 					  
 BukiPowerRate = [1.5, 2, 2.5, 3]
 
@@ -100,6 +102,82 @@ DiffencePt = 10;
 WalkPt = 0;
 Gold = 100;
 
+function SubtractBukiTaikyu(){
+	span1 = document.getElementById("searchDnSpan1");
+	
+	idx1 = GetBukiIdx();
+	if(idx1 == -1){
+		return
+	}
+	
+	taikyu1 = SoubiItemCurrentTaikyu[idx1];
+	if(taikyu1 >= 1){
+		taikyu1--;
+	}else{
+		if(HavingItems[idx1] >= 1){
+			HavingItems[idx1] = HavingItems[idx1]-1;
+			taikyu1 = SoubiItemMaxTaikyu[idx1];
+			
+			span1.innerHTML += "武器が壊れたため、追加で"
+			span1.innerHTML += buyItemNames[idx1]
+			span1.innerHTML += "を装備しなおしました<br>"
+			
+		}else{
+			taikyu1 = 0;
+			HavingItems[idx1] = 0;
+			SoubiItemFlg[idx1] = 0;
+			SoubiBukiNasiFlg=true
+			
+			span1.innerHTML += "武器が壊れたため、素手になりました<br>"
+		}
+	}
+	
+	SoubiItemCurrentTaikyu[idx1] = taikyu1;
+	if(SoubiBukiNasiFlg == false){
+		span1.innerHTML += "武器の耐久値:"
+		span1.innerHTML += String(taikyu1);
+		span1.innerHTML += "<br>"
+	}
+}
+
+function SubtractBouguTaikyu(){
+	span1 = document.getElementById("searchDnSpan1");
+	
+	idx1 = GetBouguIdx();
+	if(idx1 == -1){
+		return
+	}
+	
+	taikyu1 = SoubiItemCurrentTaikyu[idx1];
+	if(taikyu1 >= 1){
+		taikyu1--;
+	}else{
+		if(HavingItems[idx1] >= 1){
+			HavingItems[idx1] = HavingItems[idx1]-1;
+			taikyu1 = SoubiItemMaxTaikyu[idx1];
+			
+			span1.innerHTML += "防具が壊れたため、追加で"
+			span1.innerHTML += buyItemNames[idx1]
+			span1.innerHTML += "を装備しなおしました<br>"
+			
+		}else{
+			taikyu1 = 0;
+			HavingItems[idx1] = 0;
+			SoubiItemFlg[idx1] = 0;
+			SoubiBouguNasiFlg=true
+			
+			span1.innerHTML += "防具が壊れたため、防具なしになりました<br>"
+		}
+	}
+	
+	SoubiItemCurrentTaikyu[idx1] = taikyu1;
+	if(SoubiBouguNasiFlg == false){
+		span1.innerHTML += "武器の耐久値:"
+		span1.innerHTML += String(taikyu1);
+		span1.innerHTML += "<br>"
+	}
+}
+
 function GetBukiIdx(){
 	for(i=0; i<BUKI_KIND_COUNT; i++){
 		if(SoubiItemFlg[i] == 1){
@@ -121,7 +199,12 @@ function GetBouguIdx(){
 }
 
 function CalcReducePt(){
-	rnd1 = getRandom(1, 10);
+	if(DiffencePt >= 10){
+		rnd1 = getRandom(1, 10);
+		DiffencePt -= rnd1
+	}else{
+		rnd1 = 1
+	}
 	
 	reduceRate = 0;
 	if(SoubiBouguNasiFlg == true){
@@ -137,7 +220,13 @@ function CalcReducePt(){
 
 
 function CalcAttackPt(){
-	rnd1 = getRandom(1, 10);
+	if(AttackPt >= 10){
+		rnd1 = getRandom(1, 10);
+		AttackPt -= rnd1
+		
+	}else{
+		rnd1 = 1;
+	}
 	
 	attackRate = 0;
 	if(SoubiBukiNasiFlg == true){
@@ -158,6 +247,7 @@ function GetDamage(){
 	power2 = Math.floor(power1 * rnd1 / 100)
 	
 	reduce1 = CalcReducePt()
+	SubtractBouguTaikyu()
 	
 	damage = Math.max(0, power2-reduce1);
 	
@@ -206,12 +296,20 @@ function JudgeWinOrLose(){
 
 function save(){
 
+	window.localStorage.clear();
+	
 	window.localStorage.setItem("Stamina",String(Stamina))
 	window.localStorage.setItem("LifePt",String(LifePt))
 	window.localStorage.setItem("AttackPt",String(AttackPt))
 	window.localStorage.setItem("DiffencePt",String(DiffencePt))
 	window.localStorage.setItem("WalkPt",String(WalkPt))
 	window.localStorage.setItem("Gold",String(Gold))
+	
+	ary1 = [];
+	for(i=0; i<HavingKosekis.length; i++){
+		ary1.push(String(HavingKosekis[i]));
+	}
+	window.localStorage.setItem("HavingKosekis", ary1.join(','))
 	
 	alert("ゲームデータを保存しました");
 }
@@ -224,6 +322,11 @@ function load(){
 	DiffencePt = Number(window.localStorage.getItem("DiffencePt"));
 	WalkPt = Number(window.localStorage.getItem("WalkPt"));
 	Gold = Number(window.localStorage.getItem("Gold"));
+	HavingKosekis = window.localStorage.getItem("HavingKosekis").split(",");
+	
+	for(i=0; i<HavingKosekis.length; i++){
+		HavingKosekis[i] = Number(HavingKosekis[i]);
+	}
 	
 	PrintParams();
 	PrintTotalWalk();
@@ -422,7 +525,6 @@ function escapeButtle(){
 		ret1 = JudgeWinOrLose()
 		
 		if(ret1 == LOSE){
-			span1.innerHTML += "敗北しました<br>"
 			SetLose();
 			
 			UpdatePrints();
@@ -436,6 +538,8 @@ function SetLose(){
 	Stamina = Math.floor(Stamina * 0.8);
 	LifePt = 10;
 	WalkPt = 0
+	HavingKosekis = [0, 0, 0, 0, 0,
+				 	0, 0, 0, 0]
 	
 	UnSetButtle();
 	
@@ -462,6 +566,7 @@ function attack(){
 	
 	power1 = CalcAttackPt()
 	CurrentEnemyLifePt = Math.max(CurrentEnemyLifePt - power1, 0)
+	SubtractBukiTaikyu();
 	
 	span1.innerHTML = "攻撃しました<br>"
 	span1.innerHTML += EnemyNames[CurrentEnemyIdx]
@@ -545,6 +650,7 @@ function GetKoseki(){
 	}
 	
 	HavingKosekis[idx] += rnd2
+	HavingKosekis[idx] = Math.min(KOSEKI_HAVING_MAX, HavingKosekis[idx])
 	span1.innerHTML += str1
 }
 
