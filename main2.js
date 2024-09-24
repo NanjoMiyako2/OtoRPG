@@ -36,8 +36,6 @@ HavingKosekis = [0, 2, 0, 5, 0,
 				 0, 0, 4, 0]
 				 
 
-
-
 					   
 HavingItems = [0, 0, 0, 0,
 			  0, 0, 0, 0]
@@ -50,8 +48,6 @@ SoubiItemMaxTaikyu = [99, 70, 50, 50,
 					  
 SoubiItemCurrentTaikyu = [99, 70, 50, 50,
 					  99, 70, 50, 50]
-					  
-
 SoubiBukiNasiFlg = true;
 SoubiBouguNasiFlg = true;
 
@@ -210,11 +206,48 @@ function PrintSoubiHin(){
 	}
 }
 
+function SetButtle(){
+	btn1 = document.getElementById("searchBtn1")
+	btn2 = document.getElementById("escapeBtn1")
+	btn3 = document.getElementById("attackBtn1")
+	
+	btn1.disabled = true;
+	btn2.disabled = false;
+	btn3.disabled = false;
+	
+}
+
+function UnSetButtle(){
+	btn1 = document.getElementById("searchBtn1")
+	btn2 = document.getElementById("escapeBtn1")
+	btn3 = document.getElementById("attackBtn1")
+	
+	btn1.disabled = false;
+	btn2.disabled = true;
+	btn3.disabled = true;
+}
+
+
 PrintParams();
 PrintTotalWalk();
 PrintHavingItems();
 PrintSoubiHin();
 PrintHavingKosekis();
+UnSetButtle();
+
+function escapeButtle(){
+	span1 = document.getElementById("searchDnSpan1");
+	
+	UnSetButtle();
+	
+	span1.innerHTML = "先頭から離脱しました<br>"
+}
+
+function attack(){
+	span1 = document.getElementById("searchDnSpan1");
+	
+	span1.innerHTML = "攻撃しました<br>"
+}
 
 function kankin(){
 
@@ -244,17 +277,26 @@ function GetKoseki(){
 	rnd1 = getRandom(1, 100);
 	rnd2 = getRandom(1, 5)
 	
+	span1 = document.getElementById("searchDnSpan1");
+	
 	total = 0;
 	for(i=0; i<kosekiRndRates.length; i++){
 		total += kosekiRndRates[i];
 		
 		if(total >=  rnd1){
+			str1 = String(kosekiNames[i]);
+			str1 += "を"
+			str1 += String(rnd2)
+			str1 += "個"
+			str1 += "見つけました<br>"
+			
 			idx = i
 			break;
 		}
 	}
 	
 	HavingKosekis[idx] += rnd2
+	span1.innerHTML += str1
 }
 
 function soubiChange(){
@@ -400,6 +442,18 @@ function searchDanjon(){
 		WalkPt++;
 		Stamina--;
 		span1.innerHTML = "ダンジョン探索をしました<br>"
+		
+		rnd1 = getRandom(1, 100);
+		
+		if(rnd1 <= 50){
+			span1.innerHTML += "鉱石を見つけました<br>"
+			GetKoseki()
+			
+		}else{
+			span1.innerHTML += "モンスターに遭遇しました<br>"
+			SetButtle()
+		}
+		
 
 		
 	}
