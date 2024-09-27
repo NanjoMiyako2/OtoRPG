@@ -99,7 +99,7 @@ UpperVolCount = 0;
 UpperVolEventCount = 0;
 AddParamKind = 1;
 
-Stamina = 10;
+Stamina = 20;
 LifePt = 10;
 AttackPt = 10;
 DiffencePt = 10;
@@ -687,6 +687,65 @@ function GetKoseki(){
 	span1.innerHTML += str1
 }
 
+function GetKoseki2(stamina1){
+
+	totalGetKoseki = [0, 0, 0, 0, 0,
+				 0, 0, 0, 0]
+				 
+	idx = 0;
+	total = 0;
+	for(j=0; j<=(stamina1-10); j++){
+		LifePt -= 3;
+		
+		rnd0 = getRandom(1, 100)
+		total = 0;
+		
+		if(rnd0 >= 50){
+		
+			rnd1 = getRandom(1, 100);
+			rnd2 = getRandom(1, 5)
+			
+			total = 0;
+			for(i=0; i<kosekiRndRates.length; i++){
+				total += kosekiRndRates[i];
+				
+				if(total >=  rnd1){	
+					idx = i
+					break;
+				}
+			}
+			
+			totalGetKoseki[idx] += rnd2
+			totalGetKoseki[idx] = Math.min(KOSEKI_HAVING_MAX, totalGetKoseki[idx])
+		
+		
+		}
+	}
+
+
+	span1 = document.getElementById("searchDnSpan1");
+	span1.innerHTML = "自動探索を行った<br>";
+	
+	for(k=0; k<kosekiRndRates.length; k++){
+		str1 = String(kosekiNames[k]);
+		str1 += "を"
+		str1 += String(totalGetKoseki[k])
+		str1 += "個"
+		str1 += "見つけました<br>"
+		
+
+		HavingKosekis[k] += totalGetKoseki[k]
+
+		span1.innerHTML += str1		
+
+	}
+	
+	UpdatePrints()
+	
+
+
+}
+
 function soubiChange(){
 
 	span1 = document.getElementById("ChangeSoubiSpan1");
@@ -718,7 +777,7 @@ function soubiChange(){
 			span1.innerHTML = "持っていないため、装備変更ができませんでした";
 		}else{
 			if(idx <= 3){
-				SoubiBukiNasiFlg = false
+				SoubiBukiNasiFlg = false2
 			}else if(idx <= 7){
 				SoubiBouguNasiFlg = false
 			}
@@ -817,6 +876,29 @@ function onProcess(event) {
     return max > cur ? max : cur;
   });
   render(100 * peak);
+}
+
+function autoSearch(){
+
+	if(LifePt < Stamina*3){
+		alert("自動探索ではスタミナの3倍のHPが必要です")
+		
+	}else if(Stamina <= 10){
+		alert("自動探索では11以上のスタミナが必要です")
+		
+	}else{
+		GetKoseki2(Stamina);
+		
+		Stamina = 10;
+		
+		AttackPt = Math.floor(AttackPt * 0.5);
+		DiffencePt = Math.floor(DiffencePt * 0.5)
+		
+		
+
+	}
+	
+	UpdatePrints();
 }
 
 function searchDanjon(){
