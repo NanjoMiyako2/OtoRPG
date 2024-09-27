@@ -19,6 +19,7 @@
     攻撃Pt:<span id="attackPt1"></span><br>
     防御Pt:<span id="diffencePt1"></span><br>
     ゴールド:<span id="money1"></span><br>
+    ゴールド解放回数(寄付回数):<span id="kaihouCount1"></span><br>
     <hr>
 
 
@@ -32,6 +33,7 @@
             <li class="tab tab-04">装備変更</li>
             <li class="tab tab-05">換金</li>
             <li class="tab tab-06">セーブ・ロード</li>
+            <li class="tab tab-07">999999Gを解放して寄付</li>
         </ul>
 
         <!--タブを切り替えて表示するコンテンツ-->
@@ -136,8 +138,18 @@
             <div class="content tab-06">
             	セーブ・ロード<br>
             	<button onClick="save()" type="button">セーブ</button><br>
+            	<hr><hr><hr>
             	<button onClick="load()" type="button">ロード</button><br>
             	<span id="kankinSpan1"></span><br>
+            </div>
+            
+            <div class="content tab-07">
+            	999999Gを解放
+            	<button onClick="kaihou()" type="button">999999Gを解放して寄付のリンクを表示する</button><br>
+            	<hr>
+            	<a id="kifuLink1" href=""><span id="kaihouSpan1"></span></a><br><br><br>
+            	<br>
+            	
             </div>
             
         </div>

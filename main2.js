@@ -25,6 +25,8 @@ const WIN = 0;
 const LOSE = 1;
 const ON_BUTTLE = 2;
 
+const KAIHOU_GOLD = 999999;
+
 
 
 const buyItemNames = ["木の棒", "鉄の棒", "鉄の剣", "鋼の剣",
@@ -65,6 +67,8 @@ SoubiBouguNasiFlg = true;
 
 OnButtleFlg = false;
 
+KaihouCount = 0;
+
 const enemyRndRates = [17, 17, 17, 17, 8,8,8,5,3]
 
 const EnemyNames = ["スライム","アルミラージ","コボルト","ゴブリン",
@@ -101,6 +105,31 @@ AttackPt = 10;
 DiffencePt = 10;
 WalkPt = 0;
 Gold = 100;
+
+function kaihou(){
+
+	if(Gold < KAIHOU_GOLD){
+		alert("解放に必要なゴールドが足りません")
+		
+	}else{
+	
+		if(!window.confirm("本当にゴールドを解放しますか?")){return}
+		
+		Gold -= KAIHOU_GOLD;
+		KaihouCount++;
+		
+		link1 = document.getElementById("kifuLink1");
+		span1 = document.getElementById("kaihouSpan1");
+		
+		url1 = "https://www.ashinaga.org/donation/";
+		link1.setAttribute('href', url1);
+		span1.innerHTML = "あしなが育英会の寄付用リンク"
+		
+		alert("ゴールドを解放しました");
+		
+		UpdatePrints();
+	}
+}
 
 function SubtractBukiTaikyu(){
 	span1 = document.getElementById("searchDnSpan1");
@@ -304,6 +333,7 @@ function save(){
 	window.localStorage.setItem("DiffencePt",String(DiffencePt))
 	window.localStorage.setItem("WalkPt",String(WalkPt))
 	window.localStorage.setItem("Gold",String(Gold))
+	window.localStorage.setItem("KaihouCount",String(KaihouCount))
 	
 	ary1 = [];
 	for(i=0; i<HavingKosekis.length; i++){
@@ -323,6 +353,7 @@ function load(){
 	WalkPt = Number(window.localStorage.getItem("WalkPt"));
 	Gold = Number(window.localStorage.getItem("Gold"));
 	HavingKosekis = window.localStorage.getItem("HavingKosekis").split(",");
+	KaihouCount = window.localStorage.getItem("KaihouCount");
 	
 	for(i=0; i<HavingKosekis.length; i++){
 		HavingKosekis[i] = Number(HavingKosekis[i]);
@@ -403,6 +434,7 @@ function PrintParams(){
   span3 = document.getElementById("attackPt1");
   span4 = document.getElementById("diffencePt1");
   span5 = document.getElementById("money1");
+  span6 = document.getElementById("kaihouCount1")
   
     
   span1.innerHTML = Stamina;
@@ -410,6 +442,7 @@ function PrintParams(){
   span3.innerHTML = AttackPt;
   span4.innerHTML = DiffencePt;
   span5.innerHTML = Gold;
+  span6.innerHTML = KaihouCount;
   
 }
 
